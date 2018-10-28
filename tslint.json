@@ -1,0 +1,14 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "semicolon": [true, "never"],
+        "trailing-comma": [true, {
+            "multiline": true
+        }],
+        "quotemark": [true, "single"],
+        "object-literal-sort-keys": false,
+        "interface-name": [true, "never-prefix"],
+        "no-consecutive-blank-lines": [true, 2],
+        "max-line-length": [true, 120]
+    }
+}

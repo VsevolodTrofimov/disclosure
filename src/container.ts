@@ -1,83 +1,50 @@
 import { Assign } from 'utility-types'
 
-
 export const isFactory = Symbol('isFactory')
 
-export interface Container<Config> {
-    config: Config
-    items: any,
-    set: (kv: object) => void
-    get<Id extends keyof Config>(id: Id): Config[Id]
-}
-
-
-export const bind = <KV extends object>(kv: KV) => <Config extends object>(container: Container<Config>) => {
-    type NewConfig = Assign<Config, KV>
-
-    container.set(kv)
-
-    return container as Container<NewConfig>
-}
-
-
-export const bindFactory = <KV extends object, R>(kv: KV, di: {
+export interface Factory<T> {
     [isFactory]: boolean,
-    factory: (...args: any[]) => R
-}) => <Config extends object>(container: Container<Config>) => {
-    type NewConfig = Assign<Config, { [key in keyof KV]: R }>
-
-    container.set({
-        [Object.keys(kv)[0]]: di
-    })
-
-    return container as Container<NewConfig>
+    type: T,
+    factory: (...args: any[]) => T
 }
 
+export class Container<Config extends object> {
+    public config: Config = undefined as any
 
-export const create = (): Container<{}> => {
-    const items = {}
-    const container = {
-        config: {},
-        items,
-        set: (kv: any) => Object.assign(items, kv),
-        get: (id: any) => {
-            const item = (items as any)[id]
+    private items: any = {}
 
-            if (typeof item === 'object' && item[isFactory]) {
-                return (item as any).factory(container)
-            }
+    public get<Id extends keyof Config>(id: Id): Config[Id] {
+        const item = (this.items as any)[id]
 
-            return item
+        if (typeof item === 'object' && item[isFactory]) {
+            return (item as any).factory(this)
         }
+
+        return item
     }
 
-    return container
-}
+    public bind = <Id extends string, T>(id: Id, value: T) => {
+        type NewConfig = Assign<Config, { [K in Id]: T }>
 
+        this.items[id] = value
 
-export const merge = <Config1 extends object, Config2 extends object>(
-    container1: Container<Config1>,
-    container2: Container<Config2>
-) => {
-    type NewConfig = Assign<Config1, Config2>
-
-    const container = create()
-    container.set(container1.items)
-    container.set(container2.items)
-
-    return container as Container<NewConfig>
-}
-
-export const add = <Config1 extends object>(
-    container1: () => Container<Config1>,
-) => <Config2 extends object>(
-    container2: Container<Config2>
-) => {
-        type NewConfig = Assign<Config1, Config2>
-
-        const container = create()
-        container.set(container2.items)
-        container.set(container1().items)
-
-        return container as Container<NewConfig>
+        return this as unknown as Container<NewConfig>
     }
+
+    public bindMore = <Id extends string, T extends Id extends keyof Config ? Config[Id] : any>(id: Id, value: T[]) => {
+        type NewConfig = Assign<Config, { [K in Id]: T[] }>
+
+        this.items[id] = this.items[id] || []
+        this.items[id].push(value)
+
+        return this as unknown as Container<NewConfig>
+    }
+
+    public bindFactory = <R, F extends string>(field: F, di: Factory<R>) => {
+        type NewConfig = Assign<Config, { [key in F]: R }>
+
+        this.items[field] = di
+
+        return this as unknown as Container<NewConfig>
+    }
+}

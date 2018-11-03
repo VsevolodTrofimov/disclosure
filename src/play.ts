@@ -1,5 +1,5 @@
 import { pipe } from 'ramda'
-import { add, bind, bindFactory, Container, create, merge } from './container'
+import { Container } from './container'
 import { di1 } from './di'
 
 interface FinalConfig {
@@ -22,60 +22,32 @@ const bla20 = final1(['bla'], (kek) => {
     return wow
 })
 
-const base = bind({
-    bla: 'wow',
-    lol: {
+const c2 = new Container()
+    .bind('bla', 'wow')
+    .bind('bla', 15)
+    .bind('lol', {
         kek: 10,
         pek: 40
-    }
-})(create())
+    })
+    .bind('kek', () => 255)
 
-const fix = bind({
-    bla: 15,
-    kek: create
-})(base)
+const moduleB = <T extends object>(
+    container: Container<T>
+) => container
+    .bindFactory('blag', bla10)
+    .bindFactory('blaf', bla20)
 
-const old = bindFactory({ bla10 }, bla10)(fix)
+const moduleС = <T extends object>(
+    container: Container<T>
+) => container.bindFactory('blaf', bla10)
 
-const basic = pipe(
-    create,
-    bind({
-        bla: 'wow',
-        lol: {
-            kek: 10,
-            pek: 40
-        }
-    }),
-    bind({
-        bla: 15,
-        kek: create
-    }),
-)
+const f2: Container<FinalConfig> = moduleB(c2)
 
-const a = pipe(create, bindFactory({ blag: '' }, bla10))
-const b = pipe(create, bindFactory({ blaf: '' }, bla20))
-const c = pipe(create, bindFactory({ blaf: '' }, bla10))
+const val21 = f2.get('lol')
+const val22 = f2.get('bla')
+const val23 = f2.get('kek')
+const val24 = f2.get('blag')
+const val25 = f2.get('blaf')
 
-const p = merge(
-    basic(),
-    merge(
-        a(),
-        merge(b(), c())
-    )
-) as Container<FinalConfig>
-
-const pc = pipe(
-    basic,
-    add(a),
-    add(b),
-    add(c),
-)() as Container<FinalConfig>
-
-const val1 = pc.get('lol')
-const val2 = pc.get('bla')
-const val3 = pc.get('kek')
-const val4 = pc.get('blag')
-const val5 = pc.get('blaf')
-
-console.log(val1, val2, val3, val4, val5)
-
+// tslint:disable-next-line:no-console
+console.log(val21, val22, val23, val24, val25)

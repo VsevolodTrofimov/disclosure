@@ -70,7 +70,6 @@ export class ChainingContainer<Config extends object> implements Container<Confi
     // part of the chain that binds values by adding more to an array, reused across bindMore calls
     private adder: Adder<Config, ''> = {
         toValue: (value) => {
-            console.log(this.getItemArr(), this.lastKey)
             this.getItemArr().push({
                 type: DisclosureItemType.value,
                 value
@@ -79,7 +78,6 @@ export class ChainingContainer<Config extends object> implements Container<Confi
         },
 
         toFactory: (factory) => {
-            console.log(this.getItemArr(), this.lastKey)
             this.getItemArr().push(factory)
             return this as any
         }

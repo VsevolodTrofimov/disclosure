@@ -1,5 +1,6 @@
 import { Assign } from 'utility-types'
 import { Container, Item, ItemFactory, Items, ItemType, Key } from './types'
+import { once } from './utils'
 
 
 export interface Binder<Config extends object, Id extends Key> {
@@ -41,12 +42,24 @@ export class ChainingContainer<Config extends object> implements Container<Confi
         }
     }
 
-    public bind = <Id extends Key>(id: Id) => {
+    public asSignleton() {
+        const item = this.items[this.lastKey]
+
+        if (Array.isArray(item)) {
+            item[item.length - 1] = this.makeSingleton(item[item.length - 1])
+        } else {
+            this.items[this.lastKey] = this.makeSingleton(item)
+        }
+
+        return this
+    }
+
+    public bind<Id extends Key>(id: Id) {
         this.lastKey = id
         return this.binder as any as Binder<Config, Id>
     }
 
-    public bindMore = <Id extends Key, T extends Id extends keyof Config ? Config[Id] : any>(id: Id, value: T) => {
+    public bindMore<Id extends Key, T extends Id extends keyof Config ? Config[Id] : any>(id: Id, value: T) {
         type NewConfig = Assign<Config, { [K in Id]: T[] }>
 
         // for some reason doing this on an object field doesn't trigger type guard
@@ -76,6 +89,17 @@ export class ChainingContainer<Config extends object> implements Container<Confi
         switch (item.type) {
             case ItemType.factory: return item.factory(this)
             case ItemType.value: return item.value
+        }
+    }
+
+    private makeSingleton<T>(item: Item<T>) {
+        switch (item.type) {
+            case ItemType.factory:
+                return {
+                    ...item,
+                    factory: once(item.factory)
+                }
+            case ItemType.value: return item
         }
     }
 }

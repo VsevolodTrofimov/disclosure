@@ -11,12 +11,12 @@ export enum ItemType {
 }
 
 export interface ItemFactory<T> {
-    type: ItemType.factory,
+    type: ItemType.factory
     factory: (container: any) => T
 }
 
 export interface ItemValue<T> {
-    type: ItemType.value,
+    type: ItemType.value
     value: T
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "disclosure",
   "version": "0.0.0",
-  "description": "Closure based DI container",
+  "description": "A typesafe based DI container",
   "main": "index.js",
   "scripts": {
     "play": "ts-node-dev ./src/play.ts"
@@ -25,13 +25,10 @@
   },
   "homepage": "https://github.com/VsevolodTrofimov/disclosure#readme",
   "devDependencies": {
-    "@types/ramda": "^0.25.40",
     "ts-node-dev": "^1.0.0-pre.30",
     "tslint": "^5.11.0",
     "typescript": "^3.1.3",
     "utility-types": "^2.1.0"
   },
-  "dependencies": {
-    "ramda": "^0.25.0"
-  }
+  "dependencies": {}
 }

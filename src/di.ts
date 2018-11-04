@@ -1,4 +1,4 @@
-import { Container, Factory, isFactory } from './container'
+import { Container, ItemFactory, ItemType } from './types'
 
 
 const factory = <Config extends object, HookReturn>(
@@ -16,9 +16,8 @@ export const di2 = <Config extends object>() => <
     >(
         ids: [Id1, Id2],
         hook: (arg1: Config[Id1], arg2: Config[Id2]) => HookReturn
-    ): Factory<HookReturn> => ({
-        [isFactory]: true,
-        type: undefined as any as HookReturn,
+    ): ItemFactory<HookReturn> => ({
+        type: ItemType.factory,
         factory: factory<Config, HookReturn>(ids, hook),
     })
 
@@ -28,8 +27,7 @@ export const di1 = <Config extends object>() => <
     >(
         ids: [Id1],
         hook: (arg1: Config[Id1]) => HookReturn
-    ) => ({
-        [isFactory]: true,
-        type: undefined as any as HookReturn,
+    ): ItemFactory<HookReturn> => ({
+        type: ItemType.factory,
         factory: factory<Config, HookReturn>(ids, hook),
     })

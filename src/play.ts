@@ -1,6 +1,6 @@
-import { pipe } from 'ramda'
-import { Container } from './container'
+import { ChainingContainer } from './ChainingContainer'
 import { di1 } from './di'
+import { Container } from './types'
 
 interface FinalConfig {
     bla: number,
@@ -22,24 +22,28 @@ const bla20 = final1(['bla'], (kek) => {
     return wow
 })
 
-const c2 = new Container()
-    .bind('bla', 'wow')
-    .bind('bla', 15)
-    .bind('lol', {
+const blaStr = final1(['lol'], () => {
+    return 'str'
+})
+
+const c2 = new ChainingContainer()
+    .bind('bla').toValue('wow')
+    .bind('bla').toValue(15)
+    .bind('lol').toValue({
         kek: 10,
         pek: 40
     })
-    .bind('kek', () => 255)
+    .bind('kek').toValue(() => 255)
 
 const moduleB = <T extends object>(
-    container: Container<T>
+    container: ChainingContainer<T>
 ) => container
-    .bindFactory('blag', bla10)
-    .bindFactory('blaf', bla20)
+    .bind('blag').toFactory(bla10)
+    .bind('blaf').toFactory(bla20)
 
 const moduleС = <T extends object>(
-    container: Container<T>
-) => container.bindFactory('blaf', bla10)
+    container: ChainingContainer<T>
+) => container.bind('blaf').toFactory(bla10)
 
 const f2: Container<FinalConfig> = moduleB(c2)
 

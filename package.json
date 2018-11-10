@@ -11,7 +11,7 @@
     "dev-rollup": "rollup -c rollup.config.js -w",
     "play-hard": "ts-node-dev ./playground/hard.ts",
     "play-easy": "ts-node-dev ./playground/easy.ts",
-    "generate-di-typings": "ts-node-dev ./generateDiTypings.ts"
+    "generate-di-typings": "ts-node-dev ./build/generateDiTypings.ts"
   },
   "repository": {
     "type": "git",

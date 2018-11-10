@@ -1,4 +1,4 @@
-import { ChainingContainer, Container, DI } from '../'
+import { ChainingContainer, Container, DI } from '..'
 
 interface FinalConfig {
     num: number,

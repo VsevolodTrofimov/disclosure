@@ -1,40 +1,51 @@
 import * as fs from 'fs'
-import { dirname } from 'path'
 
-const fileStart = `import { Container, Factory, ItemType } from '../types'\n\n`
-const fileEnd = `\n`
+const indent = '    '
 
-const declStart = `export function di<Config extends object>(): <`
+const fileStart = `import { Container, Factory } from '../types'
+
+declare class DI<Config> {
+
+`
+const fileEnd = `}
+
+export default DI
+`
+
+const declStart = `public makeFactory<\n`
 const idGeneric = (i: number) => `Id${i} extends keyof Config,\n`
-const genericEnd = 'HookReturn\n>('
-const idArgBody = (i: number) => `id${i}: Id${i},`
-const hookStart = `hook: (`
-const hookArg = (i: number) => `value${i}: Config[Id${i}],`
-const hookEnd = `) => HookReturn`
-const declEnd = `) => Factory<HookReturn>`
+const genericEnd = 'HookReturn\n>(\n'
+const idArgBody = (i: number) => `id${i}: Id${i},\n`
+const hookStart = `hook: (\n`
+const hookArg = (i: number) => `value${i}: Config[Id${i}],\n`
+const hookEnd = `) => HookReturn\n`
+const declEnd = `): Factory<HookReturn>`
 
 
 const createDeclFor = (n: number) => {
     let decl = declStart
-    for (let i = 0; i < n; ++i) { decl += idGeneric(i) }
-    decl += genericEnd
-    for (let i = 0; i < n; ++i) { decl += idArgBody(i) }
-    decl += hookStart
-    for (let i = 0; i < n; ++i) { decl += hookArg(i) }
-    decl += hookEnd
+    for (let i = 1; i <= n; ++i) { decl += indent + idGeneric(i) }
+    decl += indent + genericEnd
+    for (let i = 1; i <= n; ++i) { decl += indent + idArgBody(i) }
+    decl += indent + hookStart
+    for (let i = 1; i <= n; ++i) { decl += indent + indent + hookArg(i) }
+    decl += indent + hookEnd
     decl += declEnd
     return decl
 }
 
 const createTypings = (n: number) => {
     let typings = fileStart
-    for (let i = 0; i < n; ++i) { typings += createDeclFor(i) }
+    for (let i = 1; i <= n; ++i) {
+        typings += indent + createDeclFor(i).replace(/\n/g, '\n' + indent) + '\n\n'
+    }
     typings += fileEnd
     return typings
 }
 
 // File generation
-const declarations = createTypings(parseInt(process.argv[0], 10))
-const filename = __dirname + '/src/di/index.d.ts'
+const upTo = parseInt(process.argv[2], 10)
+const declarations = createTypings(upTo)
+const filename = __dirname + '/../src/di/index.d.ts'
 
 fs.writeFileSync(filename, declarations)

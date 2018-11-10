@@ -5,6 +5,7 @@ import { Container } from './types'
 interface FinalConfig {
     bla: number
     lol: object
+    arr: number[]
     blaf: number
     blag: number
     blagsignle: number
@@ -14,7 +15,6 @@ interface FinalConfig {
 const final1 = di1<FinalConfig>()
 
 const bla10 = final1(['bla'], (kek) => {
-    console.warn('bla10 called')
     const wow = kek + 10
     return wow
 })
@@ -30,6 +30,9 @@ const blaStr = final1(['lol'], () => {
 
 const c2 = new ChainingContainer()
     .bind('bla').toValue('wow')
+    .bind('arr').toValue([20])
+    .bindMore('arr').toFactory(bla10)
+    .bindMore('arr').toFactory(bla10).asSignleton()
     .bind('bla').toValue(15)
     .bind('lol').toValue({
         kek: 10,
@@ -55,6 +58,7 @@ const val22 = f2.get('bla')
 const val23 = f2.get('kek')
 const val24 = f2.get('blag')
 const val25 = f2.get('blaf')
+const valarr = f2.get('arr')
 
 const val242 = f2.get('blag')
 
@@ -63,4 +67,4 @@ const val24s2 = f2.get('blagsignle')
 const val24s3 = f2.get('blagsignle')
 
 // tslint:disable-next-line:no-console
-console.log(val21, val22, val23, val24, val242, val25, val24s1, val24s2, val24s3)
+console.log(val21, val22, val23, val24, val242, valarr, val25, val24s1, val24s2, val24s3)

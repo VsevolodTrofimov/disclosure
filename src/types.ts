@@ -7,25 +7,38 @@ export interface Container<Config extends object> {
 
 export enum ItemType {
     factory,
-    value
+    value,
+    many,
 }
 
-export interface ItemFactory<T> {
+export interface Factory<T> {
     type: ItemType.factory
     factory: (container: any) => T
 }
 
-export interface ItemValue<T> {
+export interface Value<T> {
     type: ItemType.value
     value: T
 }
 
-export type Item<T> = ItemValue<T> | ItemFactory<T>
+export interface Many<T> {
+    type: ItemType.many
+    base: Value<T[]> | Factory<T[]>
+    rest: Array<DisclosureItem<T>>
+}
+
+export type DisclosureItem<T> = Value<T> | Factory<T> | Many<T>
+
 
 export interface Items {
-    [key: string]: Item<unknown> | Array<Item<unknown>>
-    [key: number]: Item<unknown> | Array<Item<unknown>>
+    [key: string]: DisclosureItem<unknown>
+    [key: number]: DisclosureItem<unknown>
 }
 
 
 export type Key = string | number
+
+
+// we can't trigger custom typeerrors so we'll do this
+// tslint:disable-next-line:no-empty-interface
+export interface ContainerСorruptBy<T extends string> { }

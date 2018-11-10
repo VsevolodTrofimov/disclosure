@@ -1,6 +1,6 @@
-import { Container, Factory } from '../types'
+import { Container, Factory } from './types'
 
-declare class DI<Config> {
+export default class DI<Config> {
 
     public makeFactory<
         Id1 extends keyof Config,
@@ -772,6 +772,18 @@ declare class DI<Config> {
         ) => HookReturn
     ): Factory<HookReturn>
 
-}
 
-export default DI
+    public makeFactory(...args: any): Factory<any> {
+        const hook = args.pop()
+        const ids = args
+
+        return {
+            type: 'factory',
+            factory(container: Container<any>) {
+                const hookArgs = ids.map((id: any) => container.get(id))
+                return hook(...hookArgs)
+            }
+        }
+    }
+
+}

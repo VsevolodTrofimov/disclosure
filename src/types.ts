@@ -5,24 +5,18 @@ export interface Container<Config extends object> {
 }
 
 
-export enum ItemType {
-    factory,
-    value,
-    many,
-}
-
 export interface Factory<T> {
-    type: ItemType.factory
+    type: 'factory'
     factory: (container: any) => T
 }
 
 export interface Value<T> {
-    type: ItemType.value
+    type: 'value'
     value: T
 }
 
 export interface Many<T> {
-    type: ItemType.many
+    type: 'many'
     base: Value<T[]> | Factory<T[]>
     rest: Array<DisclosureItem<T>>
 }
@@ -37,8 +31,3 @@ export interface Items {
 
 
 export type Key = string | number
-
-
-// we can't trigger custom typeerrors so we'll do this
-// tslint:disable-next-line:no-empty-interface
-export interface ContainerСorruptBy<T extends string> { }

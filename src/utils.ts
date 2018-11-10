@@ -2,7 +2,6 @@ import {
     Container,
     DisclosureItem,
     Factory,
-    ItemType,
     Many,
     Value,
 } from './types'
@@ -22,15 +21,15 @@ export function once<Args extends any[], Return>(f: (...args: Args) => Return) {
 }
 
 export const makeValueItem = <T>(source: T): Value<T> => ({
-    type: ItemType.value,
+    type: 'value',
     value: source
 })
 
 export const ensureManyItem = <T>(item: Value<T[]> | Factory<T[]> | Many<T>): Many<T> => {
-    if (item.type === ItemType.many) { return item }
+    if (item.type === 'many') { return item }
 
     return {
-        type: ItemType.many,
+        type: 'many',
         base: item,
         rest: []
     }
@@ -39,9 +38,9 @@ export const ensureManyItem = <T>(item: Value<T[]> | Factory<T[]> | Many<T>): Ma
 export const makeInstanceCreator = <C extends object>(container: Container<C>) => {
     const create = <T>(item: DisclosureItem<T>) => {
         switch (item.type) {
-            case ItemType.factory: return item.factory(container)
-            case ItemType.value: return item.value
-            case ItemType.many:
+            case 'factory': return item.factory(container)
+            case 'value': return item.value
+            case 'many':
                 const base = create(item.base) as T[]
                 const rest = item.rest.map(create) as T[]
                 return base.concat(rest)

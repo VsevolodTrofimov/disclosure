@@ -1,6 +1,5 @@
 import babel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
-import copy from 'rollup-plugin-copy'
 
 
 export default {
@@ -11,9 +10,6 @@ export default {
         }),
         babel({
             extensions: ['.js', '.ts']
-        }),
-        copy({
-            'src/di/index.d.ts': 'dist/di/index.d.ts'
         }),
     ],
     output: [{

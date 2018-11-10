@@ -7,7 +7,21 @@ const fileStart = `import { Container, Factory } from '../types'
 declare class DI<Config> {
 
 `
-const fileEnd = `}
+const fileEnd = `
+    public makeFactory(...args: any): Factory<any> {
+        const hook = args.pop()
+        const ids = args
+
+        return {
+            type: 'factory',
+            factory(container: Container<any>) {
+                const hookArgs = ids.map((id: any) => container.get(id))
+                return hook(...hookArgs)
+            }
+        }
+    }
+
+}
 
 export default DI
 `

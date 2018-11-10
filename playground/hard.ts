@@ -1,6 +1,4 @@
-import { ChainingContainer } from './ChainingContainer'
-import { di1 } from './di'
-import { Container } from './types'
+import { ChainingContainer, Container, di } from '..'
 
 interface FinalConfig {
     bla: number
@@ -12,25 +10,25 @@ interface FinalConfig {
     kek: () => void
 }
 
-const final1 = di1<FinalConfig>()
+const final = di<FinalConfig>()
 
-const bla10 = final1(['bla'], (kek) => {
+const bla10 = final('bla', (kek) => {
     const wow = kek + 10
     return wow
 })
 
-const bla20 = final1(['bla'], (kek) => {
+const bla20 = final('bla', (kek) => {
     const wow = kek + 20
     return wow
 })
 
-const blaStr = final1(['lol'], () => {
+const blaStr = final('lol', () => {
     return 'str'
 })
 
 const c2 = new ChainingContainer()
     .bind('bla').toValue('wow')
-    .bind('arr').toValue([20])
+    .bind('arr').toValue<number[]>([])
     .bindMore('arr').toFactory(bla10)
     .bindMore('arr').toFactory(bla10).asSignleton()
     .bind('bla').toValue(15)

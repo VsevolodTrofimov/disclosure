@@ -9,15 +9,15 @@
         "declaration": true,
         "emitDeclarationOnly": true,
         "strict": true,
-        "typeRoots": ["./typings", "./node_modules/@types"],
         "lib": [
+            "dom",
             "es2018"
         ],
         "outDir": "dist"
     },
 
     "include": [
-        "src/**/*"
+        "./*"
     ],
 
     "exclude": [

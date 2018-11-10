@@ -4,25 +4,18 @@ export interface Container<Config extends object> {
     get<Id extends keyof Config>(id: Id): Config[Id]
 }
 
-
-export enum ItemType {
-    factory,
-    value,
-    many,
-}
-
 export interface Factory<T> {
-    type: ItemType.factory
+    type: 'factory'
     factory: (container: any) => T
 }
 
 export interface Value<T> {
-    type: ItemType.value
+    type: 'value'
     value: T
 }
 
 export interface Many<T> {
-    type: ItemType.many
+    type: 'many'
     base: Value<T[]> | Factory<T[]>
     rest: Array<DisclosureItem<T>>
 }

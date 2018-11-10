@@ -1,10 +1,17 @@
 {
   "name": "disclosure",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A typesafe based DI container",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "play": "ts-node-dev ./src/play.ts"
+    "build": "rm -rf ./dist && tsc && rollup -c rollup.config.js",
+    "dev-ts": "tsc -w",
+    "dev-rollup": "rollup -c rollup.config.js -w",
+    "play-hard": "ts-node-dev ./playground/hard.ts",
+    "play-easy": "ts-node-dev ./playground/easy.ts",
+    "generate-di-typings": "ts-node-dev ./generateDiTypings.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +32,16 @@
   },
   "homepage": "https://github.com/VsevolodTrofimov/disclosure#readme",
   "devDependencies": {
+    "@babel/core": "^7.1.5",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.5",
+    "@babel/preset-typescript": "^7.1.0",
+    "@types/node": "^10.12.5",
+    "rollup": "^0.67.0",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-copy": "^0.2.3",
+    "rollup-plugin-copy-glob": "^0.2.2",
+    "rollup-plugin-node-resolve": "^3.4.0",
     "ts-node-dev": "^1.0.0-pre.30",
     "tslint": "^5.11.0",
     "typescript": "^3.1.3",

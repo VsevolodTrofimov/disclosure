@@ -6,10 +6,10 @@ export default {
     input: './src/index.ts',
     plugins: [
         resolve({
-            extensions: ['.ts', '.js', '.json'],
+            extensions: ['.ts'],
         }),
         babel({
-            extensions: ['.js', '.ts']
+            extensions: ['.ts']
         }),
     ],
     output: [{

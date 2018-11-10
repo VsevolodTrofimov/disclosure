@@ -2,9 +2,9 @@ import * as fs from 'fs'
 
 const indent = '    '
 
-const fileStart = `import { Container, Factory } from '../types'
+const fileStart = `import { Container, Factory } from './types'
 
-declare class DI<Config> {
+export default class DI<Config> {
 
 `
 const fileEnd = `
@@ -22,8 +22,6 @@ const fileEnd = `
     }
 
 }
-
-export default DI
 `
 
 const declStart = `public makeFactory<\n`
@@ -60,6 +58,6 @@ const createTypings = (n: number) => {
 // File generation
 const upTo = parseInt(process.argv[2], 10)
 const declarations = createTypings(upTo)
-const filename = __dirname + '/../src/di/index.d.ts'
+const filename = __dirname + '/../src/di.ts'
 
 fs.writeFileSync(filename, declarations)

@@ -16,6 +16,7 @@ const p20 = di('num', (num) => num + 20)
 class ValueMaker {
     constructor(num: number) {
         this.num = num
+        // tslint:disable-next-line:no-console
         console.warn('MADE')
     }
 
@@ -32,9 +33,10 @@ const cont: Container<FinalConfig> = new ChainingContainer()
     .bind('num').toValue(10)
     .bind('npp').toFactory(p20)
     .bind('str').toValue('ok')
-    .bind('vm').toFactory(vm).asSignleton()
+    .bind('vm').toFactory(vm).asSingleton()
 
 // tslint:disable-next-line:no-console
 console.log(cont.get('num'), cont.get('npp'), cont.get('str'))
 
+// tslint:disable-next-line:no-console
 console.log(cont.get('vm').get(), cont.get('vm').get())

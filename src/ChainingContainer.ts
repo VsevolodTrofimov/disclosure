@@ -35,7 +35,7 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
     public config: Config = undefined as any
 
     // binds last value as singleton
-    public asSignleton() {
+    public asSingleton() {
         const item = this.items[this.lastKey]
 
         if (item.type === 'many') {
@@ -71,7 +71,7 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
     // real container content with item type resolution information
     private items: Items = {}
 
-    // last key for binder, adder & as signleton to use (required to provide efficient chainig api)
+    // last key for binder, adder & as singleton to use (required to provide efficient chaining api)
     private lastKey: Key = ''
 
     // part of the chain that binds values by resetting, reused across bind calls

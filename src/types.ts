@@ -4,6 +4,7 @@ export interface Container<Config extends object> {
     get<Id extends keyof Config>(id: Id): Config[Id]
 }
 
+
 export interface Factory<T> {
     type: 'factory'
     factory: (container: any) => T
@@ -30,8 +31,3 @@ export interface Items {
 
 
 export type Key = string | number
-
-
-// we can't trigger custom typeerrors so we'll do this
-// tslint:disable-next-line:no-empty-interface
-export interface ContainerСorruptBy<T extends string> { }

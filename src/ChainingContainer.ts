@@ -1,6 +1,14 @@
 import { Assign } from 'utility-types'
-import { Container, ContainerСorruptBy, DisclosureItemFactory, DisclosureItemType, Item, Items, Key } from './types'
-import { once } from './utils'
+import {
+    Container,
+    ContainerСorruptBy,
+    DisclosureItem,
+    Factory,
+    Items,
+    ItemType,
+    Key,
+} from './types'
+import { ensureManyItem, makeInstanceCreator, makeValueItem, once } from './utils'
 
 
 export interface Binder<Config extends object, Id extends Key> {
@@ -9,7 +17,7 @@ export interface Binder<Config extends object, Id extends Key> {
     ) => ChainingContainer<Assign<Config, { [K in Id]: Type }>>
 
     toFactory: <Return>(
-        di: DisclosureItemFactory<Return>
+        di: Factory<Return>
     ) => ChainingContainer<Assign<Config, { [K in Id]: Return }>>
 }
 
@@ -32,17 +40,15 @@ export interface Adder<Config extends object, Id extends Key> {
             ? (Config[Id] extends any[] ? Config[Id] : never)
             : any // for some strange reason all other types cannot be indexed
         ) >(
-        di: DisclosureItemFactory<Return[0]>
+        di: Factory<Return[0]>
     ) => Id extends keyof Config
         ? ChainingContainer<Config>
         : ContainerСorruptBy<'Using bindMore with a key that doesn`t exit'>
 }
 
-
 export class ChainingContainer<Config extends object> implements Container<Config> {
     // Config is public so error messages are more straightforward
     public config: Config = undefined as any
-
 
     // This is where all the work happens
     // real container content with item type resolution information
@@ -54,10 +60,7 @@ export class ChainingContainer<Config extends object> implements Container<Confi
     // part of the chain that binds values by resetting, reused across bind calls
     private binder: Binder<Config, ''> = {
         toValue: (value) => {
-            this.items[this.lastKey] = {
-                type: DisclosureItemType.value,
-                value
-            }
+            this.items[this.lastKey] = makeValueItem(value)
             return this as any
         },
 
@@ -70,24 +73,26 @@ export class ChainingContainer<Config extends object> implements Container<Confi
     // part of the chain that binds values by adding more to an array, reused across bindMore calls
     private adder: Adder<Config, ''> = {
         toValue: (value) => {
-            this.getItemArr().push({
-                type: DisclosureItemType.value,
-                value
-            })
+            this.ensureLastMany().rest.push(makeValueItem(value))
             return this as any
         },
 
         toFactory: (factory) => {
-            this.getItemArr().push(factory)
+            this.ensureLastMany().rest.push(factory)
             return this as any
         }
     }
 
+    // Creates final values that are returned by get
+    private makeInstance = makeInstanceCreator(this)
+
+    // binds last value as singleton
     public asSignleton() {
         const item = this.items[this.lastKey]
 
-        if (Array.isArray(item)) {
-            item[item.length - 1] = this.makeSingleton(item[item.length - 1])
+        if (item.type === ItemType.many) {
+            const end = item.rest.length - 1
+            item.rest[end] = this.makeSingleton(item.rest[end])
         } else {
             this.items[this.lastKey] = this.makeSingleton(item)
         }
@@ -95,54 +100,46 @@ export class ChainingContainer<Config extends object> implements Container<Confi
         return this
     }
 
+    // returns are typesafe binder
     public bind<Id extends Key>(id: Id) {
         this.lastKey = id
         return this.binder as any as Binder<Config, Id>
     }
 
+    // returns are typesafe adder
     public bindMore<Id extends Key>(id: Id) {
         this.lastKey = id
         return this.adder as any as Adder<Config, Id>
     }
 
-
+    // returns final value for given id
     public get<Id extends keyof Config>(id: Id): Config[Id] {
         // Typescript still lacks support for symbol indexing
         const item: Items[''] = (this.items as any)[id]
-
-        if (Array.isArray(item)) {
-            return item.map(this.makeInstance) as any as Config[Id]
-        } else {
-            return this.makeInstance<Config[Id]>(item as any)
-        }
+        return this.makeInstance(item) as Config[Id]
     }
 
-    private makeInstance = <T>(item: Item<T>) => {
+    // ensures that given value will be a singleton
+    private makeSingleton = <T>(item: DisclosureItem<T>) => {
         switch (item.type) {
-            case DisclosureItemType.factory: return item.factory(this)
-            case DisclosureItemType.value: return item.value
-        }
-    }
-
-    private makeSingleton = <T>(item: Item<T>) => {
-        switch (item.type) {
-            case DisclosureItemType.factory:
-                return {
+            case ItemType.factory:
+                const onceFactory: Factory<T> = {
                     ...item,
                     factory: once(item.factory)
                 }
-            case DisclosureItemType.value: return item
+                return onceFactory
+            case ItemType.value: return item
+            // this should impossible though
+            case ItemType.many: return item
         }
     }
 
     // used by adder
-    private getItemArr = () => {
-        const item = this.items[this.lastKey]
-        if (Array.isArray(item)) { return item }
+    private ensureLastMany = () => {
+        // this should only happen for items, that return array
+        const item = ensureManyItem(this.items[this.lastKey] as any)
 
-        // convert into array of identifiers
-        const arr: Array<Item<unknown>> = []
-        this.items[this.lastKey] = arr
-        return arr
+        this.items[this.lastKey] = item
+        return item
     }
 }

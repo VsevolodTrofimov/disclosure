@@ -30,9 +30,9 @@ const blaStr = final1(['lol'], () => {
 
 const c2 = new ChainingContainer()
     .bind('bla').toValue('wow')
-    .bind('arr').toValue<number[]>([])
+    .bind('arr').toValue([20])
     .bindMore('arr').toFactory(bla10)
-    .bindMore('arr').toFactory(bla10)
+    .bindMore('arr').toFactory(bla10).asSignleton()
     .bind('bla').toValue(15)
     .bind('lol').toValue({
         kek: 10,

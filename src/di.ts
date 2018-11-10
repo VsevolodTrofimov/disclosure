@@ -1,4 +1,4 @@
-import { Container, DisclosureItemFactory, DisclosureItemType } from './types'
+import { Container, Factory, ItemType } from './types'
 
 
 const factory = <Config extends object, HookReturn>(
@@ -16,8 +16,8 @@ export const di2 = <Config extends object>() => <
     >(
         ids: [Id1, Id2],
         hook: (arg1: Config[Id1], arg2: Config[Id2]) => HookReturn
-    ): DisclosureItemFactory<HookReturn> => ({
-        type: DisclosureItemType.factory,
+    ): Factory<HookReturn> => ({
+        type: ItemType.factory,
         factory: factory<Config, HookReturn>(ids, hook),
     })
 
@@ -27,7 +27,7 @@ export const di1 = <Config extends object>() => <
     >(
         ids: [Id1],
         hook: (arg1: Config[Id1]) => HookReturn
-    ): DisclosureItemFactory<HookReturn> => ({
-        type: DisclosureItemType.factory,
+    ): Factory<HookReturn> => ({
+        type: ItemType.factory,
         factory: factory<Config, HookReturn>(ids, hook),
     })

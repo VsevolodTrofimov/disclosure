@@ -1,5 +1,5 @@
 import { ChainingContainer } from './ChainingContainer'
-import DITools from './DITools'
+import { DITools } from './DITools'
 import * as types from './types'
 
 // babel has problems otherwise

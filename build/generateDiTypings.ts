@@ -4,7 +4,7 @@ const indent = '    '
 
 const fileStart = `import { Container, Factory } from './types'
 
-export default class DITools<Config> {
+export class DITools<Config> {
 
 `
 const fileEnd = `

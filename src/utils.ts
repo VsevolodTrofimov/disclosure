@@ -12,7 +12,7 @@ export function once<Args extends any[], Return>(f: (...args: Args) => Return) {
 
     return function(this: unknown, ...args: Args) {
         if (!called) {
-            result = f.apply(this, arguments)
+            result = f.apply(this, args)
             called = true
         }
 
@@ -48,4 +48,18 @@ export const makeInstanceCreator = <C extends object>(container: Container<C>) =
     }
 
     return create
+}
+
+export const makeSingleton = <T>(item: DisclosureItem<T>) => {
+    switch (item.type) {
+        case 'factory':
+            const onceFactory: Factory<T> = {
+                ...item,
+                factory: once(item.factory)
+            }
+            return onceFactory
+        case 'value': return item
+        // this is unsupported right now impossible though
+        case 'many': return item
+    }
 }

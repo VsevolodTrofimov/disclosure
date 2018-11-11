@@ -1,4 +1,4 @@
-import { ChainingContainer, Container, DI } from '..'
+import { ChainingContainer, Container, DITools } from '..'
 
 interface FinalConfig {
     bla: number
@@ -10,7 +10,7 @@ interface FinalConfig {
     kek: () => void
 }
 
-const final = new DI<FinalConfig>().makeFactory
+const final = new DITools<FinalConfig>().makeFactory
 
 const bla10 = final('bla', (kek) => {
     const wow = kek + 10

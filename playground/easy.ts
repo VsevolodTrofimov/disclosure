@@ -1,4 +1,4 @@
-import { ChainingContainer, Container, DI } from '..'
+import { ChainingContainer, Container, DITools } from '..'
 
 interface FinalConfig {
     num: number,
@@ -7,7 +7,7 @@ interface FinalConfig {
     vm: ValueMaker
 }
 
-const di = new DI<FinalConfig>().makeFactory
+const di = new DITools<FinalConfig>().makeFactory
 
 const p10 = di('num', (num) => num + 10)
 

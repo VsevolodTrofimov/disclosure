@@ -4,7 +4,7 @@ const indent = '    '
 
 const fileStart = `import { Container, Factory } from './types'
 
-export default class DI<Config> {
+export default class DITools<Config> {
 
 `
 const fileEnd = `
@@ -58,6 +58,6 @@ const createTypings = (n: number) => {
 // File generation
 const upTo = parseInt(process.argv[2], 10)
 const declarations = createTypings(upTo)
-const filename = __dirname + '/../src/di.ts'
+const filename = __dirname + '/../src/DITools.ts'
 
 fs.writeFileSync(filename, declarations)

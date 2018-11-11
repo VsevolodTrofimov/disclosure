@@ -1,6 +1,6 @@
 import { Container, Factory } from './types'
 
-export default class DI<Config> {
+export default class DITools<Config> {
 
     public makeFactory<
         Id1 extends keyof Config,

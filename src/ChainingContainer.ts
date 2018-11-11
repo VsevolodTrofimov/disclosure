@@ -6,7 +6,7 @@ import {
     Items,
     Key,
 } from './types'
-import { ensureManyItem, makeInstanceCreator, makeValueItem, once } from './utils'
+import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem, once } from './utils'
 
 
 export interface Binder<Config extends object, Id extends Key> {
@@ -32,7 +32,7 @@ export interface Adder<Config extends object, Id extends keyof Config> {
 
 export class ChainingContainer<Config extends {}> implements Container<Config> {
     // Config is public so error messages are more straightforward
-    public config: Config = undefined as any
+    public config!: Config
 
     // binds last value as singleton
     public asSingleton() {
@@ -40,9 +40,9 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
 
         if (item.type === 'many') {
             const end = item.rest.length - 1
-            item.rest[end] = this.makeSingleton(item.rest[end])
+            item.rest[end] = makeSingleton(item.rest[end])
         } else {
-            this.items[this.lastKey] = this.makeSingleton(item)
+            this.items[this.lastKey] = makeSingleton(item)
         }
 
         return this
@@ -102,21 +102,6 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
 
     // Creates final values that are returned by get
     private makeInstance = makeInstanceCreator(this)
-
-    // ensures that given value will be a singleton
-    private makeSingleton = <T>(item: DisclosureItem<T>) => {
-        switch (item.type) {
-            case 'factory':
-                const onceFactory: Factory<T> = {
-                    ...item,
-                    factory: once(item.factory)
-                }
-                return onceFactory
-            case 'value': return item
-            // this should impossible though
-            case 'many': return item
-        }
-    }
 
     // used by adder, ensures that this.items[this.lastKey] is of type Many
     private ensureLastMany = () => {

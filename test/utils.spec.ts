@@ -1,5 +1,5 @@
 import { Container, Factory, Many, Value } from '../src/types'
-import { ensureManyItem, makeInstanceCreator, makeValueItem, once } from '../src/utils'
+import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem, once } from '../src/utils'
 
 describe('Utils', () => {
     const magic = Object.freeze({ magic: true })
@@ -20,9 +20,22 @@ describe('Utils', () => {
         rest: []
     }
 
+    interface Config {
+        num: number
+    }
+
+    const container: Container<Config> = {
+        config: {} as any as Config,
+        get() {
+            return 10
+        }
+    }
+
     Object.freeze(mItem)
     Object.freeze(fItem)
     Object.freeze(vItem)
+    Object.freeze(container)
+
 
     describe('once', () => {
         it('returns function`s first result', () => {
@@ -92,19 +105,6 @@ describe('Utils', () => {
     })
 
     describe('makeInstanceCreator', () => {
-        interface Config {
-            num: number
-        }
-
-        const container: Container<Config> = {
-            config: {} as any as Config,
-            get() {
-                return 10
-            }
-        }
-
-        Object.freeze(container)
-
         it('Creates from value', () => {
             const ic = makeInstanceCreator(container)
             expect(ic(vItem)).toBe(magic)
@@ -140,6 +140,30 @@ describe('Utils', () => {
             }
 
             expect(ic(numMany)).toEqual([20, 30, 15, 25])
+        })
+    })
+
+    describe('makeSingleton', () => {
+        it('Returns Value and Many items as is', () => {
+            expect(makeSingleton(vItem)).toBe(vItem)
+            expect(makeSingleton(mItem)).toBe(mItem)
+        })
+
+        it('Makes factories run once, without mutating them', () => {
+            const getNum = jest.fn().mockImplementation((cont: Container<Config>) => cont.get('num'))
+            const fact: Factory<number> = {
+                type: 'factory',
+                factory: getNum
+            }
+            Object.freeze(fact)
+
+            const singleFactory = makeSingleton(fact) as Factory<number>
+
+            expect(singleFactory.factory(container)).toBe(container.get('num'))
+            expect(singleFactory.factory(container)).toBe(container.get('num'))
+            expect(singleFactory.factory(container)).toBe(container.get('num'))
+
+            expect(getNum).toHaveBeenCalledTimes(1)
         })
     })
 })

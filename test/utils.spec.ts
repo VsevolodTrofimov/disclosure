@@ -97,11 +97,8 @@ describe('Utils', () => {
         }
 
         const container: Container<Config> = {
-            config: {
-                num: 10
-            },
-
-            get<Id extends keyof Config>(): Config[Id] {
+            config: {} as any as Config,
+            get() {
                 return 10
             }
         }

@@ -1,12 +1,11 @@
 import { Assign } from 'utility-types'
 import {
     Container,
-    DisclosureItem,
     Factory,
     Items,
     Key,
 } from './types'
-import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem, once } from './utils'
+import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem } from './utils'
 
 
 export interface Binder<Config extends object, Id extends Key> {

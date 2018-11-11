@@ -8,6 +8,8 @@
         "strictNullChecks": true,
         "declaration": true,
         "emitDeclarationOnly": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "strict": true,
         "allowJs": false,
         "typeRoots": ["./typings", "./node_modules/@types"],

@@ -12,7 +12,7 @@ export function once<Args extends any[], Return>(f: (...args: Args) => Return) {
 
     return function(this: unknown, ...args: Args) {
         if (!called) {
-            result = f.apply(this, arguments)
+            result = f.apply(this, args)
             called = true
         }
 

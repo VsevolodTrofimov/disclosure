@@ -1,15 +1,13 @@
 import { ChainingContainer, Container, DITools } from '..'
 
 interface FinalConfig {
-    num: number,
-    npp: number,
-    str: string,
+    num: number
+    npp: number
+    str: string
     vm: ValueMaker
 }
 
 const di = new DITools<FinalConfig>().makeFactory
-
-const p10 = di('num', (num) => num + 10)
 
 const p20 = di('num', (num) => num + 20)
 

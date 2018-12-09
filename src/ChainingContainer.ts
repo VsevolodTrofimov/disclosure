@@ -1,6 +1,7 @@
 import { Assign } from 'utility-types'
 import {
     Container,
+    DisclosureItem,
     Factory,
     Items,
     Key,
@@ -50,13 +51,13 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
     // returns a typed binder
     public bind<Id extends Key>(id: Id) {
         this.lastKey = id
-        return this.binder as any as Binder<Config, Id>
+        return this.binder as unknown as Binder<Config, Id>
     }
 
     // returns a typed adder
     public bindMore<Id extends keyof Config>(id: Id) {
         this.lastKey = id as Key
-        return this.adder as any as Adder<Config, Id>
+        return this.adder as Adder<Config, Id>
     }
 
     // returns final value for the given id
@@ -90,12 +91,12 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
     private adder: Adder<Config, never> = {
         toValue: (value) => {
             this.ensureLastMany().rest.push(makeValueItem(value))
-            return this as any
+            return this
         },
 
         toFactory: (factory) => {
             this.ensureLastMany().rest.push(factory)
-            return this as any
+            return this
         }
     }
 
@@ -105,7 +106,7 @@ export class ChainingContainer<Config extends {}> implements Container<Config> {
     // used by adder, ensures that this.items[this.lastKey] is of type Many
     private ensureLastMany = () => {
         // this should only happen for items, that return array
-        const item = ensureManyItem(this.items[this.lastKey] as any)
+        const item = ensureManyItem(this.items[this.lastKey] as DisclosureItem<Array<unknown>>)
 
         this.items[this.lastKey] = item
         return item

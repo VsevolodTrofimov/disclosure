@@ -63,3 +63,5 @@ export const makeSingleton = <T>(item: DisclosureItem<T>) => {
         case 'many': return item
     }
 }
+
+export const toClass = <Args extends any[], R>(Cls: new (...args: Args) => R) => (...args: Args) => new Cls(...args)

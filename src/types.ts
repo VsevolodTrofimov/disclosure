@@ -7,7 +7,7 @@ export interface Container<Config extends object> {
 
 export interface Factory<T> {
     type: 'factory'
-    factory: (container: any) => T
+    factory: (container: Container<any>) => T
 }
 
 export interface Value<T> {

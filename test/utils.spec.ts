@@ -1,5 +1,5 @@
 import { Container, Factory, Many, Value } from '../src/types'
-import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem, once } from '../src/utils'
+import { ensureManyItem, makeInstanceCreator, makeSingleton, makeValueItem, once, toClass } from '../src/utils'
 
 describe('Utils', () => {
     const magic = Object.freeze({ magic: true })
@@ -164,6 +164,19 @@ describe('Utils', () => {
             expect(singleFactory.factory(container)).toBe(container.get('num'))
 
             expect(getNum).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe('toClass', () => {
+        it('Converts class into a factory that creates it`s instance', () => {
+            class Adder {
+                constructor(private a: number, private b: number) { }
+                public sum = () => this.a + this.b
+            }
+
+            const factoryHook = toClass(Adder)
+
+            expect(factoryHook(5, 4).sum()).toBe(9)
         })
     })
 })

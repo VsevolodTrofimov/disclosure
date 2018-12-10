@@ -1,6 +1,6 @@
 {
-  "name": "disclosure",
-  "version": "0.0.1",
+  "name": "disclosure-di",
+  "version": "0.1.0",
   "description": "A typesafe based DI container",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.esm.js",
